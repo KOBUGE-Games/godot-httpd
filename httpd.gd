@@ -14,6 +14,26 @@ func write_str(con, stri):
 	#print(str("writing string ", stri))
 	return con.put_data(stri.to_utf8())
 
+# decodes the percent encoding in urls
+func decode_percent_url(url):
+	var arr = url.split("%")
+	var first = true
+	var ret = arr[0]
+	for stri in arr:
+		if (not first):
+			var hex = stri.substr(0, 2)
+			var hi = hex.hex_to_int()
+
+			# this is a broken try to convert an int into its
+			# unicode represented string
+			var ha = [hi]
+			var encoded = RawArray(ha).get_string_from_utf8()
+
+			ret = str(ret, encoded, stri.substr(2, stri.length()))
+		else:
+			first = false
+	return ret
+
 # reads (and blocks) until the first \n, and perhaps more.
 # you can feed the "more" part to the startstr arg
 # of subsequent calls
@@ -119,7 +139,7 @@ func extract_path(con):
 		write_error(con, "500 Server error", "Error while reading.")
 		return false
 	var lines = st_line.split("\n")
-	var lo = lines[0]
+	var lo = decode_percent_url(lines[0])
 	if ((lo.find("\\") != -1) or (lo.find("../") != -1)):
 		write_error(con, "403 Forbidden", "Forbidden URL!")
 		return false
