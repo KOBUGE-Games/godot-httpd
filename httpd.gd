@@ -164,7 +164,7 @@ func extract_path(con):
 		return false
 	else:
 		if (mth != "GET"):
-			write_error(con, "500 Server error", str("HTTP message '", mth, "' not supported!"))
+			write_error(con, "500 Server error", str("HTTP method '", mth, "' not supported!"))
 			return false
 		return url
 
