@@ -146,8 +146,8 @@ func write_file(con, path):
 		con.put_data(buf)
 	f.close()
 
-# returns the path if no error, sends error and false if error
-func extract_path(con):
+# returns the path and method if no error, sends error and false if error
+func parse_request(con):
 	var st_line = read_line(con, "")
 	if (not st_line):
 		write_error(con, "500 Server error", "Error while reading.")
@@ -166,7 +166,7 @@ func extract_path(con):
 		if (mth != "GET"):
 			write_error(con, "500 Server error", str("HTTP method '", mth, "' not supported!"))
 			return false
-		return url
+		return [mth, url]
 
 func run_thrd(params):
 	var con = params.con
@@ -174,9 +174,9 @@ func run_thrd(params):
 	#	print("connection is connected")
 	#else:
 	#	print("connection is NOT connected")
-	var path = extract_path(con)
-	if (path):
-		write_file(con, path)
+	var req = parse_request(con)
+	if (typeof(req) == TYPE_ARRAY):
+		write_file(con, req[1])
 
 	con.disconnect()
 
