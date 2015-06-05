@@ -44,7 +44,7 @@ func decode_percent_url(url):
 	#the url can end with a percent encoded part
 	if (in_seq):
 		var encoded = RawArray(encod_seq).get_string_from_utf8()
-		ret = str(ret, encoded, stri.substr(2, stri.length()))
+		ret = str(ret, encoded)
 	return ret
 
 # reads (and blocks) until the first \n, and perhaps more.
@@ -146,23 +146,27 @@ func write_file(con, path):
 		con.put_data(buf)
 	f.close()
 
+# returns the path if no error, sends error and false if error
 func extract_path(con):
 	var st_line = read_line(con, "")
 	if (not st_line):
 		write_error(con, "500 Server error", "Error while reading.")
 		return false
 	var lines = st_line.split("\n")
-	var lo = decode_percent_url(lines[0])
-	if ((lo.find("\\") != -1) or (lo.find("../") != -1)):
+	var arr = lines[0].split(" ")
+	if (arr.size() != 3):
+		write_error(con, "400 Forbidden", "Invalid request!")
+		return false
+	var mth = arr[0]
+	var url = decode_percent_url(arr[1])
+	if ((url.find("\\") != -1) or (url.find("../") != -1)):
 		write_error(con, "403 Forbidden", "Forbidden URL!")
 		return false
 	else:
-		var arr = lo.split(" ")
-		if (arr[0] != "GET"):
-			write_error(con, "500 Server error", str("HTTP message '", arr[0], "' not supported!"))
+		if (mth != "GET"):
+			write_error(con, "500 Server error", str("HTTP message '", mth, "' not supported!"))
 			return false
-		var path = arr[1]
-		return path
+		return url
 
 func run_thrd(params):
 	var con = params.con
