@@ -18,20 +18,33 @@ func write_str(con, stri):
 func decode_percent_url(url):
 	var arr = url.split("%")
 	var first = true
+	var in_seq = false
+	var encod_seq
 	var ret = arr[0]
+	#print(str("URL: ", url))
 	for stri in arr:
 		if (not first):
 			var hex = stri.substr(0, 2)
-			var hi = hex.hex_to_int()
+			var hi = str("0x", hex).hex_to_int()
 
-			# this is a broken try to convert an int into its
-			# unicode represented string
-			var ha = [hi]
-			var encoded = RawArray(ha).get_string_from_utf8()
-
-			ret = str(ret, encoded, stri.substr(2, stri.length()))
+			if (in_seq):
+				encod_seq.push_back(hi)
+			if (stri.length() == 2):
+				if (in_seq == false):
+					in_seq = true
+					encod_seq = [hi]
+			else:
+				if (in_seq):
+					in_seq = false
+					var encoded = RawArray(encod_seq).get_string_from_utf8()
+					ret = str(ret, encoded, stri.substr(2, stri.length()))
 		else:
 			first = false
+
+	#the url can end with a percent encoded part
+	if (in_seq):
+		var encoded = RawArray(encod_seq).get_string_from_utf8()
+		ret = str(ret, encoded, stri.substr(2, stri.length()))
 	return ret
 
 # reads (and blocks) until the first \n, and perhaps more.
