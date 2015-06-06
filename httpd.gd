@@ -92,6 +92,7 @@ func write_error(con, error, content):
 	var cont_data = content.to_utf8()
 	write_str(con, str("HTTP/1.0 ", error, "\n"))
 	write_str(con, str("Content-Length: ", cont_data.size(), "\n"))
+	write_str(con, "Connection: close\n")
 	write_str(con, "\n")
 	con.put_data(cont_data)
 
