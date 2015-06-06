@@ -74,18 +74,18 @@ func read_line(con, startstr):
 
 func get_mime(path):
 	var arr = path.split(".")
-	var endpart = arr[arr.size() - 1]
-	if (not endpart):
+	var ext = arr[arr.size() - 1]
+	if (not ext):
 		return false
-	elif (endpart == "cpp" or endpart == "h" or endpart == "txt" or endpart == "conf"):
+	elif (ext == "cpp" or ext == "h" or ext == "txt" or ext == "conf"):
 		return "text/plain; charset=utf-8"
-	elif (endpart == "html" or endpart == "htm"):
+	elif (ext == "html" or ext == "htm"):
 		return "text/html; charset=utf-8"
-	#elif (endpart == "png"):
+	#elif (ext == "png"):
 	#	return "image/png"
-	#elif (endpart == "gif"):
+	#elif (ext == "gif"):
 	#	return "image/gif"
-	#elif (endpart == "jpg" or endpart == "jpeg" or endpart == "jpe"):
+	#elif (ext == "jpg" or ext == "jpeg" or ext == "jpe"):
 	#	return "image/jpeg"
 
 func write_error(con, error, content):
