@@ -147,6 +147,33 @@ func write_file(con, path):
 		con.put_data(buf)
 	f.close()
 
+func file_exists(path):
+	var f = File.new()
+	var ret = false
+	if (f.open(path, File.READ) == OK):
+		ret = true
+	else:
+		var dir = Directory.new()
+		ret = (dir.open(path) == OK)
+	f.close()
+	return ret
+
+func write_options(con, path):
+	var allow
+	if (path == "*"):
+		allow = "OPTIONS, GET"
+	else:
+		var dir = Directory.new()
+		if (file_exists(str(data_dir, path))):
+			allow = "OPTIONS, GET"
+		else:
+			allow = "OPTIONS"
+	write_str(con, "HTTP/1.0 200\n")
+	write_str(con, "Content-Length: 0\n")
+	write_str(con, str("Allow: ", allow, "\n"))
+	write_str(con, "Connection: close\n")
+	write_str(con, "\n")
+
 # returns the path and method if no error, sends error and false if error
 func parse_request(con):
 	var st_line = read_line(con, "")
@@ -164,9 +191,6 @@ func parse_request(con):
 		write_error(con, "403 Forbidden", "Forbidden URL!")
 		return false
 	else:
-		if (mth != "GET"):
-			write_error(con, "500 Server error", str("HTTP method '", mth, "' not supported!"))
-			return false
 		return [mth, url]
 
 func run_thrd(params):
@@ -177,7 +201,14 @@ func run_thrd(params):
 	#	print("connection is NOT connected")
 	var req = parse_request(con)
 	if (typeof(req) == TYPE_ARRAY):
-		write_file(con, req[1])
+		var mth = req[0]
+		var path = req[1]
+		if (mth == "GET"):
+			write_file(con, path)
+		elif (mth == "OPTIONS"):
+			write_options(con, path)
+		else:
+			write_error(con, "501 Not Implemented", str("HTTP method '", mth, "' not supported!"))
 
 	con.disconnect()
 
