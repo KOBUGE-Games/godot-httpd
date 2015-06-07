@@ -2,6 +2,6 @@
 
 A simple http file server written in godot, for more info see the file.
 
-Currently a feature this relies on isn't merged into godot, you can get and track it [here](https://github.com/okamstudio/godot/pull/2029).
+Requires: godot, starting from commit okamstudio/godot@efbe877005295995c6c24659d75800616e5da945 .
 
 License: GPLv3+
