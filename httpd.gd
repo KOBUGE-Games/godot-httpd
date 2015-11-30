@@ -8,7 +8,7 @@ extends SceneTree
 
 var srv = TCP_Server.new()
 
-var data_dir
+var data_dir # data_dir is set below in the _init() method.
 
 func write_str(con, stri):
 	#print(str("writing string ", stri))
@@ -124,7 +124,7 @@ func write_file(con, path):
 	if (f.open(str(data_dir, path), File.READ) != OK):
 		var dir = Directory.new()
 		if (dir.open(str(data_dir, path)) != OK):
-			write_error(con, "404 Not found", "File not found!")
+			write_error(con, "404 Not found", str("File ", str(data_dir, path), " not found!"))
 		else:
 			write_dir_contents(con, path, dir)
 		return
