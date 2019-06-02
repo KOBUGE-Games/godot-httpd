@@ -36,14 +36,14 @@ func decode_percent_url(url):
 			else:
 				if (in_seq):
 					in_seq = false
-					var encoded = RawArray(encod_seq).get_string_from_utf8()
+					var encoded = PoolByteArray(encod_seq).get_string_from_utf8()
 					ret = str(ret, encoded, stri.substr(2, stri.length()))
 		else:
 			first = false
 
 	#the url can end with a percent encoded part
 	if (in_seq):
-		var encoded = RawArray(encod_seq).get_string_from_utf8()
+		var encoded = PoolByteArray(encod_seq).get_string_from_utf8()
 		ret = str(ret, encoded)
 	return ret
 
