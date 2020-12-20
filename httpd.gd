@@ -210,7 +210,7 @@ func run_thrd(params):
 		else:
 			write_error(con, "501 Not Implemented", str("HTTP method '", mth, "' not supported!"))
 
-	con.disconnect()
+	con.disconnect_from_host()
 
 	# hack to free the thread reference after it has exited
 	# godot has no native protection here, and can
